@@ -66,13 +66,14 @@ window.onload = function() {
         const contratos = {};
         const estados = new Set();
         data.forEach(item => {
-            contratos[item.contrato_cliente] = {
-                horas_planificadas: parseFloat(item.horas_planificadas),
-                estados: item.estados
-            };
-            for (const estado in item.estados) {
-                estados.add(estado);
+            if (!contratos[item.contrato_cliente]) {
+                contratos[item.contrato_cliente] = {
+                    horas_planificadas: parseFloat(item.horas_planificadas),
+                    estados: {}
+                };
             }
+            contratos[item.contrato_cliente].estados[item.estado_liquidacion] = parseFloat(item.total_horas);
+            estados.add(item.estado_liquidacion);
         });
 
         const estadosArray = Array.from(estados);
