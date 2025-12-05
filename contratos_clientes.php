@@ -434,8 +434,9 @@ $(document).ready(function() {
                     }
                     html += '</td>';
                     html += '<td class="no-wrap">';
-                    html += '<a href="editar_adenda.php?id=' + adenda.idadendacli + '" class="btn btn-warning btn-sm me-1"><i class="fas fa-edit"></i></a>';
-                    html += '<button type="button" class="btn btn-danger btn-sm eliminar-adenda" data-id="' + adenda.idadendacli + '"><i class="fas fa-trash"></i></button>';
+                    html += '<button type="button" class="btn btn-info btn-sm ver-detalles-adenda" data-id="' + adenda.idadendacli + '" title="Ver Detalles"><i class="fas fa-eye"></i></button>';
+                    html += '<a href="editar_adenda.php?id=' + adenda.idadendacli + '" class="btn btn-warning btn-sm me-1" title="Editar"><i class="fas fa-edit"></i></a>';
+                    html += '<button type="button" class="btn btn-danger btn-sm eliminar-adenda" data-id="' + adenda.idadendacli + '" title="Eliminar"><i class="fas fa-trash"></i></button>';
                     html += '</td>';
                     html += '</tr>';
                 });
@@ -445,6 +446,12 @@ $(document).ready(function() {
 
             html += '</tbody></table>';
             modalBody.html(html);
+
+            // Re-inicializar tooltips en el contenido dinámico
+            var tooltipTriggerList = [].slice.call(modalBody[0].querySelectorAll('[title]'));
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
         },
         error: function() {
             modalBody.html('<p class="text-danger">Error al cargar las adendas.</p>');
@@ -489,6 +496,41 @@ $('#modalGestionarAdendasBody').on('click', '.eliminar-adenda', function() {
 
     var modalInstance = new bootstrap.Modal(modalConfirmarElement);
     modalInstance.show();
+});
+
+$('#modalGestionarAdendasBody').on('click', '.ver-detalles-adenda', function() {
+    var idAdenda = $(this).data('id');
+    var modal = $('#modalVerAdendaDetalles');
+    var modalBody = $('#modalVerAdendaDetallesBody');
+    var modalLabel = $('#modalVerAdendaDetallesLabel');
+
+    modalLabel.text('Detalles de la Adenda #' + idAdenda);
+    modalBody.html('<div class="text-center"><div class="spinner-border" role="status"><span class="visually-hidden">Cargando...</span></div></div>');
+
+    $.ajax({
+        url: 'ajax/obtener_detalles_adenda.php',
+        type: 'GET',
+        data: { id: idAdenda },
+        dataType: 'json',
+        success: function(adenda) {
+            if (adenda.error) {
+                modalBody.html('<p class="text-danger">' + adenda.error + '</p>');
+            } else {
+                var contentHtml = '<dl class="row">';
+                for (var key in adenda) {
+                    contentHtml += '<dt class="col-sm-3">' + key.charAt(0).toUpperCase() + key.slice(1) + '</dt>';
+                    contentHtml += '<dd class="col-sm-9">' + (adenda[key] || 'N/A') + '</dd>';
+                }
+                contentHtml += '</dl>';
+                modalBody.html(contentHtml);
+            }
+        },
+        error: function() {
+            modalBody.html('<p class="text-danger">Error al cargar los detalles de la adenda.</p>');
+        }
+    });
+
+    modal.modal('show');
 });
 });
 </script>
