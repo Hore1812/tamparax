@@ -155,7 +155,11 @@ $lideres = $lideres;
                      <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="tipobolsa" class="form-label">Tipo de Bolsa / Adicional</label>
-                            <input type="text" class="form-control" id="tipobolsa" name="tipobolsa" maxlength="50" value="<?php echo htmlspecialchars($contrato_actual['tipobolsa'] ?? ''); ?>">
+                            <select class="form-select" id="tipobolsa" name="tipobolsa">
+                                <option value="">Seleccionar...</option>
+                                <option value="Mensual" <?php echo (isset($contrato_actual['tipobolsa']) && $contrato_actual['tipobolsa'] == 'Mensual') ? 'selected' : ''; ?>>Mensual</option>
+                                <option value="Anual" <?php echo (isset($contrato_actual['tipobolsa']) && $contrato_actual['tipobolsa'] == 'Anual') ? 'selected' : ''; ?>>Anual</option>
+                            </select>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="tipohora" class="form-label">Tipo de Hora (Facturación) <span class="text-danger">*</span></label>
@@ -184,7 +188,13 @@ $lideres = $lideres;
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="status" class="form-label">Status del Contrato <span class="text-danger">*</span></label>
-                             <input type="text" class="form-control" id="status" name="status" maxlength="50" required placeholder="Ej: Vigente, Finalizado, Pendiente" value="<?php echo htmlspecialchars($contrato_actual['status'] ?? ''); ?>">
+                            <select class="form-select" id="status" name="status" required>
+                                <option value="">Seleccionar...</option>
+                                <option value="Vigente" <?php echo (isset($contrato_actual['status']) && $contrato_actual['status'] == 'Vigente') ? 'selected' : ''; ?>>Vigente</option>
+                                <option value="Finalizado" <?php echo (isset($contrato_actual['status']) && $contrato_actual['status'] == 'Finalizado') ? 'selected' : ''; ?>>Finalizado</option>
+                                <option value="Pendiente" <?php echo (isset($contrato_actual['status']) && $contrato_actual['status'] == 'Pendiente') ? 'selected' : ''; ?>>Pendiente</option>
+                                <option value="Otro" <?php echo (isset($contrato_actual['status']) && $contrato_actual['status'] == 'Otro') ? 'selected' : ''; ?>>Otro</option>
+                            </select>
                         </div>
                         <div class="col-md-6 mb-3 d-flex align-items-center">
                              <div class="form-check form-switch mt-4">
