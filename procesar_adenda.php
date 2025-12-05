@@ -80,10 +80,16 @@ if ($accion === 'crear' && $idcontratocli) {
     }
 
     try {
-        $sql = "INSERT INTO adendacliente (descripcion, fechainicio, fechafin, horasfijasmes, costohorafija, mesescontrato, totalhorasfijas, tipobolsa, costohoraextra, montofijomes, planmontomes, planhorasextrasmes, comentarios, idcontratocli, rutaarchivo, editor) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        // Calcular el nuevo numeroadenda
+        $stmt_num = $pdo->prepare("SELECT MAX(numeroadenda) FROM adendacliente WHERE idcontratocli = ?");
+        $stmt_num->execute([$idcontratocli]);
+        $max_num = $stmt_num->fetchColumn();
+        $nuevo_numeroadenda = ($max_num === null) ? 1 : $max_num + 1;
+
+        $sql = "INSERT INTO adendacliente (numeroadenda, descripcion, fechainicio, fechafin, horasfijasmes, costohorafija, mesescontrato, totalhorasfijas, tipobolsa, costohoraextra, montofijomes, planmontomes, planhorasextrasmes, comentarios, idcontratocli, rutaarchivo, editor) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         $stmt = $pdo->prepare($sql);
         $stmt->execute([
-            $descripcion, $fechainicio, $fechafin, $horasfijasmes, $costohorafija, $mesescontrato, $totalhorasfijas, $tipobolsa, $costohoraextra, $montofijomes, $planmontomes, $planhorasextrasmes, $comentarios, $idcontratocli, $ruta_pdf_adenda, $editor_id
+            $nuevo_numeroadenda, $descripcion, $fechainicio, $fechafin, $horasfijasmes, $costohorafija, $mesescontrato, $totalhorasfijas, $tipobolsa, $costohoraextra, $montofijomes, $planmontomes, $planhorasextrasmes, $comentarios, $idcontratocli, $ruta_pdf_adenda, $editor_id
         ]);
         $_SESSION['mensaje_exito'] = "Adenda registrada correctamente.";
     } catch (PDOException $e) {
