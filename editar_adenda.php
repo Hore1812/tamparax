@@ -146,7 +146,7 @@ if (!$contrato) {
                 </div>
                 
                 <div class="mt-4 text-end">
-                    <button type="button" class="btn btn-secondary me-2 cancel-confirmation-button" data-url="contratos_clientes.php">Cancelar</button>
+                    <button type="button" id="btnCancelarAdenda" class="btn btn-secondary me-2">Cancelar</button>
                     <button type="submit" class="btn btn-primary">Actualizar Adenda</button>
                 </div>
             </form>
@@ -157,3 +157,4 @@ if (!$contrato) {
 <?php 
 require_once 'includes/footer.php'; 
 ?>
+<script src="js/adenda_cancel.js"></script>
