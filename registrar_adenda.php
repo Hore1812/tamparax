@@ -1,7 +1,7 @@
 <?php
 $page_title = "Registrar Nueva Adenda";
 require_once 'includes/header.php';
-require_once 'funciones.php'; 
+require_once 'funciones.php';
 
 if (!isset($_GET['idcontrato']) || !filter_var($_GET['idcontrato'], FILTER_VALIDATE_INT)) {
     echo "<div class='container mt-4'><div class='alert alert-danger'>ID de contrato no válido.</div></div>";
@@ -11,7 +11,7 @@ if (!isset($_GET['idcontrato']) || !filter_var($_GET['idcontrato'], FILTER_VALID
 
 $idContrato = (int)$_GET['idcontrato'];
 
-$sqlContrato = "SELECT cc.*, c.nombrecomercial as nombre_cliente, e.nombrecorto as nombre_lider 
+$sqlContrato = "SELECT cc.*, c.nombrecomercial as nombre_cliente, e.nombrecorto as nombre_lider
                 FROM vista_contratocliente_activo cc
                 JOIN cliente c ON cc.idcliente = c.idcliente
                 JOIN empleado e ON cc.lider = e.idempleado
@@ -90,7 +90,11 @@ if (!$contrato) {
                      <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="tipobolsa" class="form-label">Tipo de Bolsa / Adicional</label>
-                            <input type="text" class="form-control" id="tipobolsa" name="tipobolsa" maxlength="50" placeholder="<?php echo htmlspecialchars($contrato['tipobolsa']); ?>">
+                            <select class="form-select" id="tipobolsa" name="tipobolsa">
+                                <option value="">Seleccionar...</option>
+                                <option value="Mensual">Mensual</option>
+                                <option value="Anual">Anual</option>
+                            </select>
                         </div>
                     </div>
                 </fieldset>
@@ -113,14 +117,14 @@ if (!$contrato) {
                     <label for="comentarios" class="form-label">Comentarios</label>
                     <textarea class="form-control" id="comentarios" name="comentarios" rows="3" maxlength="500"></textarea>
                 </div>
-                
+
                 <div class="mb-3">
                     <label for="pdf_adenda" class="form-label">Archivo PDF de la Adenda <span class="text-danger">*</span></label>
                     <input class="form-control" type="file" id="pdf_adenda" name="pdf_adenda" accept=".pdf" required>
                 </div>
-                
+
                 <div class="mt-4 text-end">
-                    <button type="button" class="btn btn-secondary me-2 cancel-confirmation-button" data-url="contratos_clientes.php">Cancelar</button>
+                    <button type="button" id="btnCancelarAdenda" class="btn btn-secondary me-2">Cancelar</button>
                     <button type="submit" class="btn btn-primary">Guardar Adenda</button>
                 </div>
             </form>
@@ -128,6 +132,75 @@ if (!$contrato) {
     </div>
 </div>
 
-<?php 
-require_once 'includes/footer.php'; 
+<?php
+require_once 'includes/footer.php';
 ?>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Lógica para el botón Cancelar
+    const btnCancelarAdenda = document.getElementById('btnCancelarAdenda');
+    const modalCancelarElement = document.getElementById('modalCancelar');
+    let modalCancelarInstance = null;
+    if (modalCancelarElement) {
+        modalCancelarInstance = new bootstrap.Modal(modalCancelarElement);
+    }
+
+    if (btnCancelarAdenda && modalCancelarInstance) {
+        btnCancelarAdenda.addEventListener('click', function() {
+            const modalTitle = modalCancelarElement.querySelector('.modal-title');
+            const modalBody = modalCancelarElement.querySelector('.modal-body');
+            const modalFooter = modalCancelarElement.querySelector('.modal-footer');
+
+            if (modalTitle) modalTitle.textContent = 'Confirmar Cancelación';
+            if (modalBody) modalBody.innerHTML = '¿Está seguro que desea cancelar el registro de la adenda? Los datos no guardados se perderán.';
+
+            if(modalFooter) {
+                modalFooter.innerHTML = `
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                    <button type="button" id="btnModalConfirmarCancelacionAdenda" class="btn btn-danger">Sí, cancelar</button>
+                `;
+                const btnConfirmarSi = modalFooter.querySelector('#btnModalConfirmarCancelacionAdenda');
+                if(btnConfirmarSi){
+                     btnConfirmarSi.addEventListener('click', function() {
+                        window.location.href = 'contratos_clientes.php';
+                    }, { once: true });
+                }
+            }
+            modalCancelarInstance.show();
+        });
+    }
+
+    // Lógica para el modal de confirmación de guardado
+    const formAdenda = document.getElementById('formAdenda');
+    const modalConfirmarGuardadoElement = document.getElementById('modalConfirmarGuardado');
+    let modalConfirmarGuardadoInstance = null;
+    if (modalConfirmarGuardadoElement) {
+        modalConfirmarGuardadoInstance = new bootstrap.Modal(modalConfirmarGuardadoElement);
+    }
+
+    if (formAdenda && modalConfirmarGuardadoInstance) {
+        formAdenda.addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevenir el envío automático
+
+            const modalTitle = modalConfirmarGuardadoElement.querySelector('.modal-title');
+            const modalBody = modalConfirmarGuardadoElement.querySelector('.modal-body');
+            const btnConfirmar = modalConfirmarGuardadoElement.querySelector('#btnConfirmarGuardarSubmit');
+
+            if (modalTitle) modalTitle.textContent = 'Confirmar Guardado';
+            if (modalBody) modalBody.textContent = '¿Está seguro de que desea guardar esta nueva adenda?';
+            if (btnConfirmar) btnConfirmar.textContent = 'Sí, guardar';
+
+            // Eliminar listeners previos para evitar envíos múltiples
+            const newBtnConfirmar = btnConfirmar.cloneNode(true);
+            btnConfirmar.parentNode.replaceChild(newBtnConfirmar, btnConfirmar);
+
+            newBtnConfirmar.addEventListener('click', function() {
+                formAdenda.submit(); // Enviar el formulario
+            });
+
+            modalConfirmarGuardadoInstance.show();
+        });
+    }
+});
+</script>
