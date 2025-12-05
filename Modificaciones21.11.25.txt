@@ -1,0 +1,89 @@
+Revisar la información de todos los archivos en el proyecto actual así como el archivo sql u505676278_inet_ampara_ que contiene la base de datos.Luego confirmame si tienes todo el sistema web correctamente mapeado.
+
+
+ACTUALIZACIÓN 2
+
+1.-En la página registrar_liquidacion cuando se registre una nueva liquidación, el control Fecha no se pueda modificar en la página editar_liquidacion. 
+
+2.-En la página registrar_liquidacion.php se debe agregar un control o botón en el cual se pueda pegar un enlace hacia una carpeta compartida en oneDrive y un control fecha nuevo para guardar una segunda fecha y  que sólo estos controles  se puedan usar cuando el control Estado tenga la opción "Completo" al momento de guardar los cambios. así también en la página editar_liquidacion.php.
+
+3.- En la página liquidaciones.php dentro de  la tabla Histórico de Liquidaciones en  columna “Opciones” agregar un botón para
+poder visualizar el enlace hacia la carpeta de one drive dentro de una ventana modal sin tener que abrir otra página web.
+
+
+AGREGAR 2 CAMPOS A LA BD TABLA liquidaciones
+ALTER TABLE liquidacion ADD COLUMN enlace_onedrive TEXT NULL DEFAULT NULL AFTER editor;
+ALTER TABLE liquidacion ADD COLUMN fecha_completo DATE NULL DEFAULT NULL AFTER enlace_onedrive;
+
+
+
+ACTUALIZACIÓN 3(Pendiente)--¿Consultar sobre el las opciones del mení NOTICIAS el gráfico para cliente y la estadisticas de las fechas en liquidación
+
+a) LIQUIDACIONES: Se mantiene
+(b) CALENDARIO: AMPARA, Regulatorio
+(c) REPORTES: General, Colaborador, Cliente
+(d) NOTICIAS: Ordenar la Alerta, Boletín y Comunicados en un mismo módulo
+(e) APRENDIZAJE: Base Normativa, Carpetas Clientes, Expo Temática (Se mantiene)
+(f) ADMINISTRATIVO: Usuarios, Clientes, Colaboradores, Comunicados, Distribución Temática (Temas)
+- ¿Planificación puede ser un botón que sólo pueden ver los administradores en el módulo de
+liquidaciones?
+
+
+ACTUALIZACIÓN 5
+
+(a) 2 Cuadros de imágenes que sean: ALERTA NORMATIVA -> Link a pestaña de Noticias – Alerta Normativa
+| COMUNICADO DEL DÍA -> Posibilidad de programar imágenes que aparezcan diferentes días
+(b) Gráficos abajo con los datos de: % SOPORTE EQUIPO -> Porcentaje de cumplimiento de Horas Soporte
+según la pestaña Horas – Reporte AMPARA | HORAS MES -> Total de horas completas en el mes de la
+persona a la que pertenece el perfil según la pestaña CUMPLIMIENTO MES – % de cumplimiento |
+DISTRIBUCIÓN -> Total de horas completas en el mes de la persona a la que pertenece el perfil,
+diferenciado según Horas Soporte (Azul), Horas No Soporte (Celeste) y Horas Internas (Naranja)
+
+Crear una tabla en la base de datos (que permita guardar Alertas normativas que incluyen textos, fechas  y enlaces de sitios web) de nombre alerta_normativa el cual tendrá los siguientes campos 
+id autonumérico, Entidad varchar (250),titulo_alerta varchar (250), enlace_alerta text, fecha_alerta,resumen text , editor int , registrado y modificado
+siguiendo la estructura y tipos de datos  de las tablas similares.
+
+
+CREATE TABLE `alerta_normativa` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `entidad` varchar(250) NOT NULL,
+  `tipo_norma` varchar(250) NOT NULL,
+  `numero_norma` varchar(250) NOT NULL,
+  `fecha` date NOT NULL,
+  `detalle` text DEFAULT NULL,
+  `url` text DEFAULT NULL,
+  `editor` int(11) NOT NULL,
+  `registrado` timestamp NOT NULL DEFAULT current_timestamp(),
+  `modificado` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+Mejorar el módulo de Gestíon de alertas Normativas y todos los archivos relacioneados:
+
+En el archivo de alertas_normativas.php amodificar el control texto "Entidad" para filtrar por entidad o tipo de norma.El botón Eliminar no funciona y se observa el siguiente el siguiente mensaje :Uncaught ReferenceError: Swal is not defined
+    at HTMLButtonElement.<anonymous> (alertas_normativas.php:423:13)
+En el archivo registrar_alerta.php los botones Cancelar y Guardar Alerta deben de llamar al cuadro de dialogode confirmación respectivo, como lo hacen en los otros módulos.
+en el archivo Editar_alerta.php tiene el siguiente error:<br /><b>Warning</b>:  Undefined array key C:\xampp\htdocs\amparax\editar_alerta.php on line 47 " required>, así tambien  los botones  Cancelar y Actualizar Alerta deben de llamar al cuadro de dialogo de confirmación respectivo
+
+
+Crear una tabla en la base de datos la tabla boletín_regulatorio con los siguientes campos:
+
+CREATE TABLE `boletin_regulatorio` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `anio` year(4) NOT NULL,
+  `mes` varchar(20) NOT NULL,
+  `asunto` varchar(255) NOT NULL,
+  `archivo` varchar(250) NOT NULL,
+  `fecha_publicacion` date NOT NULL,
+  `fecha_registro` timestamp NOT NULL DEFAULT current_timestamp(),
+  `modificado` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `editor` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+Se require  Un Directorio de nombre PDF y en ella otro subdirectorio boletines.
+
+Se requiere crear registros para subir archivos en formatos PDF EN EL Directorio "boletines" (Se require  Un Directorio de nombre PDF y en ella otro subdirectorio boletines)
+los datos se crearán en la tabla "boletin_regulatorio". Crear para ello toda la estructura CRUD correspondiente siguiendo el estilo de los archivos ya creados.
