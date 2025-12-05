@@ -101,7 +101,11 @@ $lideres = $lideres;
                      <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="tipobolsa" class="form-label">Tipo de Bolsa / Adicional</label>
-                            <input type="text" class="form-control" id="tipobolsa" name="tipobolsa" maxlength="50">
+                            <select class="form-select" id="tipobolsa" name="tipobolsa">
+                                <option value="">Seleccionar...</option>
+                                <option value="Mensual">Mensual</option>
+                                <option value="Anual">Anual</option>
+                            </select>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="tipohora" class="form-label">Tipo de Hora (Facturación) <span class="text-danger">*</span></label>
@@ -131,7 +135,8 @@ $lideres = $lideres;
                         <div class="col-md-6 mb-3">
                             <label for="status" class="form-label">Status del Contrato <span class="text-danger">*</span></label>
                             <select class="form-select" id="status" name="status" required>
-                                <option value="Vigente" selected>Vigente</option>
+                                <option value="">Seleccionar...</option>
+                                <option value="Vigente">Vigente</option>
                                 <option value="Finalizado">Finalizado</option>
                                 <option value="Pendiente">Pendiente</option>
                                 <option value="Otro">Otro</option>

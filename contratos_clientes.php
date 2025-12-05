@@ -1,13 +1,13 @@
 <?php
 $page_title = "Gestión de Contratos de Clientes";
 require_once 'includes/header.php';
-require_once 'funciones.php'; 
+require_once 'funciones.php';
 
 // Obtener líderes para las tarjetas de filtro
 $resumen_lideres = obtenerResumenContratosPorLider();
 
 // Obtener empleados para el filtro desplegable
-$empleados_para_filtro = obtenerEmpleadosActivosParaSelect(); 
+$empleados_para_filtro = obtenerEmpleadosActivosParaSelect();
 
 // Manejo del filtro por líder desde la URL (para tarjetas y select)
 $id_lider_filtro = null;
@@ -60,7 +60,7 @@ if (empty($contratos) && empty($filtros_aplicados)) {
             'lider' => 2, 'nombre_lider' => 'Ana López (Sim)',
             'descripcion' => 'Sim: Soporte técnico mensual.',
             'fechainicio' => '2023-11-01', 'fechafin' => null,
-            'horasfijasmes' => 20, 'costohorafija' => 55.00, 'mesescontrato' => 12, 
+            'horasfijasmes' => 20, 'costohorafija' => 55.00, 'mesescontrato' => 12,
             'totalhorasfijas' => 240, 'montofijomes' => 1100.00,
             'tipobolsa' => 'Retainer', 'costohoraextra' => 60.00,
             'planmontomes' => 1100.00, 'planhoraextrames' => 5,
@@ -71,7 +71,7 @@ if (empty($contratos) && empty($filtros_aplicados)) {
    if ($id_lider_filtro !== null) {
         $contratos_filtrados_simulados = [];
         foreach ($contratos_temp as $c) {
-            if ($c['lider'] == $id_lider_filtro) { 
+            if ($c['lider'] == $id_lider_filtro) {
                 $contratos_filtrados_simulados[] = $c;
             }
         }
@@ -109,7 +109,7 @@ if (empty($contratos) && empty($filtros_aplicados)) {
             </div>
         <?php endforeach; ?>
         <div class="col-xl-auto col-lg-3 col-md-4 col-sm-6 mb-3">
-             <a href="contratos_clientes.php" class="text-decoration-none"> 
+             <a href="contratos_clientes.php" class="text-decoration-none">
                 <div class="card h-100 <?php echo ($id_lider_filtro === null && !isset($_GET['id_lider_filtro'])) ? 'border-secondary shadow' : 'shadow-sm hover-shadow'; ?>">
                     <div class="card-body text-center px-3 py-2 d-flex flex-column justify-content-center">
                          <h6 class="card-title mb-1">Mostrar Todos</h6>
@@ -121,7 +121,7 @@ if (empty($contratos) && empty($filtros_aplicados)) {
     </div>
     <hr class="mb-4">
     <?php endif; ?>
-    
+
     <!-- <div class="card mb-3">
         <div class="card-header">Filtro Adicional</div>
         <div class="card-body">
@@ -137,9 +137,9 @@ if (empty($contratos) && empty($filtros_aplicados)) {
                                     <option value="<?php echo htmlspecialchars($emp['idempleado']); ?>" <?php echo ($id_lider_filtro == $emp['idempleado']) ? 'selected' : ''; ?>>
                                         <?php echo htmlspecialchars($emp['nombrecorto']); ?>
                                     </option>
-                            <?php 
+                            <?php
                                 endforeach;
-                            endif; 
+                            endif;
                             ?>
                         </select>
                     </div>
@@ -195,7 +195,7 @@ if (empty($contratos) && empty($filtros_aplicados)) {
                                             <i class="fas fa-file-pdf"></i>
                                         </a>
                                     <?php endif; ?>
-                                    <button type="button" class="btn btn-info btn-sm ver-contrato" 
+                                    <button type="button" class="btn btn-info btn-sm ver-contrato"
                                             data-id="<?php echo $contrato['idcontratocli']; ?>"
                                             data-bs-toggle="modal" data-bs-target="#modalVerContratoCliente"
                                             title="Ver Detalles del Contrato">
@@ -210,7 +210,7 @@ if (empty($contratos) && empty($filtros_aplicados)) {
                                     <a href="editar_contrato_cliente.php?id=<?php echo $contrato['idcontratocli']; ?>" class="btn btn-warning btn-sm" title="Editar Contrato">
                                         <i class="fas fa-edit"></i>
                                     </a>
-                                    <button type="button" class="btn btn-<?php echo (isset($contrato['activo']) && $contrato['activo']) ? 'danger' : 'success'; ?> btn-sm cambiar-estado-contrato" 
+                                    <button type="button" class="btn btn-<?php echo (isset($contrato['activo']) && $contrato['activo']) ? 'danger' : 'success'; ?> btn-sm cambiar-estado-contrato"
                                             data-id="<?php echo $contrato['idcontratocli']; ?>"
                                             data-nombre="ID <?php echo htmlspecialchars($contrato['idcontratocli']); ?> (Cliente: <?php echo htmlspecialchars($contrato['nombre_cliente'] ?? 'N/A'); ?>)"
                                             data-estado-actual="<?php echo (isset($contrato['activo']) ? $contrato['activo'] : 0); ?>"
@@ -219,9 +219,9 @@ if (empty($contratos) && empty($filtros_aplicados)) {
                                     </button>
                                 </td>
                             </tr>
-                        <?php 
+                        <?php
                         endforeach;
-                    else: 
+                    else:
                     ?>
                         <tr>
                             <td colspan="10" class="text-center">No hay contratos registrados o que coincidan con el filtro.</td>
@@ -268,9 +268,9 @@ if (empty($contratos) && empty($filtros_aplicados)) {
     </div>
 </div>
 
-<?php 
-require_once 'includes/modales.php'; 
-require_once 'includes/footer.php'; 
+<?php
+require_once 'includes/modales.php';
+require_once 'includes/footer.php';
 ?>
 
 <script>
@@ -282,10 +282,10 @@ $(document).ready(function() {
         responsive: true,
         order: [[0, 'desc']],
         columnDefs: [
-            { responsivePriority: 1, targets: 1 }, 
-            { responsivePriority: 2, targets: 3 }, 
-            { responsivePriority: 3, targets: 9 }, 
-            { orderable: false, targets: 9 }      
+            { responsivePriority: 1, targets: 1 },
+            { responsivePriority: 2, targets: 3 },
+            { responsivePriority: 3, targets: 9 },
+            { orderable: false, targets: 9 }
         ]
     });
 
@@ -293,15 +293,15 @@ $(document).ready(function() {
         var contratoId = $(this).data('id');
         var modalBody = $('#modalVerContratoClienteBody');
         var modalLabel = $('#modalVerContratoClienteLabel');
-        
+
         modalBody.html('<div class="text-center p-4"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Cargando...</span></div></div>');
-        
-        var contratosData = <?php echo json_encode($contratos); ?>; 
+
+        var contratosData = <?php echo json_encode($contratos); ?>;
         var data = contratosData.find(c => c.idcontratocli == contratoId);
 
         if(data){
             modalLabel.text(`Detalles Contrato #${data.idcontratocli} - Cliente: ${data.nombre_cliente || 'N/A'}`);
-            
+
             const formatDate = (dateString) => {
                 if (!dateString || dateString === '0000-00-00') return 'N/A';
                 const dateParts = dateString.split('-');
@@ -309,7 +309,7 @@ $(document).ready(function() {
                     const date = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
                      return date.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' });
                 }
-                return dateString; 
+                return dateString;
             };
             const formatCurrency = (value) => {
                 const num = parseFloat(value);
@@ -364,22 +364,22 @@ $(document).ready(function() {
 
     $('#tablaContratosClientes tbody').on('click', '.cambiar-estado-contrato', function () {
         var contratoId = $(this).data('id');
-        var contratoNombre = $(this).data('nombre'); 
+        var contratoNombre = $(this).data('nombre');
         var estadoActual = parseInt($(this).data('estado-actual'));
         var accion = estadoActual === 1 ? "desactivar" : "activar";
         var textoAccion = estadoActual === 1 ? "Desactivar" : "Activar";
-        
-        const modalConfirmarElement = document.getElementById('modalConfirmarGuardado'); 
+
+        const modalConfirmarElement = document.getElementById('modalConfirmarGuardado');
         if (modalConfirmarElement) {
             const modalTitle = modalConfirmarElement.querySelector('.modal-title');
             const modalBody = modalConfirmarElement.querySelector('.modal-body');
             const btnConfirmarSubmit = modalConfirmarElement.querySelector('#btnConfirmarGuardarSubmit');
-            
+
             if (modalTitle) modalTitle.textContent = `Confirmar ${textoAccion} Contrato`;
             if (modalBody) modalBody.innerHTML = `¿Está seguro que desea ${accion} el contrato <strong>${contratoNombre}</strong>?`;
             if (btnConfirmarSubmit) btnConfirmarSubmit.textContent = `Sí, ${textoAccion}`;
-            
-            $(btnConfirmarSubmit).off('click').on('click', function() { 
+
+            $(btnConfirmarSubmit).off('click').on('click', function() {
                 var form = $('<form action="procesar_contrato_cliente.php" method="POST" style="display:none;"></form>');
                 form.append(`<input type="hidden" name="accion" value="${accion}">`);
                 form.append(`<input type="hidden" name="idcontratocli" value="${contratoId}">`);
@@ -418,12 +418,13 @@ $(document).ready(function() {
         dataType: 'json',
         success: function(response) {
             var html = '<table class="table table-sm table-bordered">';
-            html += '<thead><tr><th>ID</th><th>Descripción</th><th>Fecha Inicio</th><th>Fecha Fin</th><th>PDF</th><th class="no-wrap">Opciones</th></tr></thead>';
+            html += '<thead><tr><th>Nro. Adenda</th><th>ID</th><th>Descripción</th><th>Fecha Inicio</th><th>Fecha Fin</th><th>PDF</th><th class="no-wrap">Opciones</th></tr></thead>';
             html += '<tbody>';
 
             if (response.length > 0) {
                 response.forEach(function(adenda) {
                     html += '<tr id="adenda-row-' + adenda.idadendacli + '">';
+                    html += '<td>' + (adenda.numeroadenda || 'N/A') + '</td>';
                     html += '<td>' + adenda.idadendacli + '</td>';
                     html += '<td>' + adenda.descripcion + '</td>';
                     html += '<td>' + (adenda.fechainicio ? new Date(adenda.fechainicio).toLocaleDateString('es-ES') : 'N/A') + '</td>';
@@ -434,17 +435,24 @@ $(document).ready(function() {
                     }
                     html += '</td>';
                     html += '<td class="no-wrap">';
-                    html += '<a href="editar_adenda.php?id=' + adenda.idadendacli + '" class="btn btn-warning btn-sm me-1"><i class="fas fa-edit"></i></a>';
-                    html += '<button type="button" class="btn btn-danger btn-sm eliminar-adenda" data-id="' + adenda.idadendacli + '"><i class="fas fa-trash"></i></button>';
+                    html += '<button type="button" class="btn btn-info btn-sm ver-detalles-adenda" data-id="' + adenda.idadendacli + '" title="Ver Detalles"><i class="fas fa-eye"></i></button>';
+                    html += '<a href="editar_adenda.php?id=' + adenda.idadendacli + '" class="btn btn-warning btn-sm me-1" title="Editar"><i class="fas fa-edit"></i></a>';
+                    html += '<button type="button" class="btn btn-danger btn-sm eliminar-adenda" data-id="' + adenda.idadendacli + '" title="Eliminar"><i class="fas fa-trash"></i></button>';
                     html += '</td>';
                     html += '</tr>';
                 });
             } else {
-                html += '<tr><td colspan="6" class="text-center">No hay adendas para este contrato.</td></tr>';
+                html += '<tr><td colspan="7" class="text-center">No hay adendas para este contrato.</td></tr>';
             }
 
             html += '</tbody></table>';
             modalBody.html(html);
+
+            // Re-inicializar tooltips en el contenido dinámico
+            var tooltipTriggerList = [].slice.call(modalBody[0].querySelectorAll('[title]'));
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
         },
         error: function() {
             modalBody.html('<p class="text-danger">Error al cargar las adendas.</p>');
@@ -489,6 +497,41 @@ $('#modalGestionarAdendasBody').on('click', '.eliminar-adenda', function() {
 
     var modalInstance = new bootstrap.Modal(modalConfirmarElement);
     modalInstance.show();
+});
+
+$('#modalGestionarAdendasBody').on('click', '.ver-detalles-adenda', function() {
+    var idAdenda = $(this).data('id');
+    var modal = $('#modalVerAdendaDetalles');
+    var modalBody = $('#modalVerAdendaDetallesBody');
+    var modalLabel = $('#modalVerAdendaDetallesLabel');
+
+    modalLabel.text('Detalles de la Adenda #' + idAdenda);
+    modalBody.html('<div class="text-center"><div class="spinner-border" role="status"><span class="visually-hidden">Cargando...</span></div></div>');
+
+    $.ajax({
+        url: 'ajax/obtener_detalles_adenda.php',
+        type: 'GET',
+        data: { id: idAdenda },
+        dataType: 'json',
+        success: function(adenda) {
+            if (adenda.error) {
+                modalBody.html('<p class="text-danger">' + adenda.error + '</p>');
+            } else {
+                var contentHtml = '<dl class="row">';
+                for (var key in adenda) {
+                    contentHtml += '<dt class="col-sm-3">' + key.charAt(0).toUpperCase() + key.slice(1) + '</dt>';
+                    contentHtml += '<dd class="col-sm-9">' + (adenda[key] || 'N/A') + '</dd>';
+                }
+                contentHtml += '</dl>';
+                modalBody.html(contentHtml);
+            }
+        },
+        error: function() {
+            modalBody.html('<p class="text-danger">Error al cargar los detalles de la adenda.</p>');
+        }
+    });
+
+    modal.modal('show');
 });
 });
 </script>
