@@ -10,9 +10,14 @@ $clientes = obtenerTodosClientes_crud(); // Descomentar cuando la función esté
 <div class="container-fluid mt-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h1>Gestión de Clientes</h1>
-        <a href="registrar_cliente.php" class="btn btn-primary">
-            <i class="fas fa-plus me-2"></i>Agregar Nuevo Cliente
-        </a>
+        <div>
+            <a href="contratos_clientes.php" class="btn btn-info me-2">
+                <i class="fas fa-file-contract me-2"></i>Gestionar Contratos
+            </a>
+            <a href="registrar_cliente.php" class="btn btn-primary">
+                <i class="fas fa-plus me-2"></i>Agregar Nuevo Cliente
+            </a>
+        </div>
     </div>
 
     <div class="card">
