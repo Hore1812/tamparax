@@ -966,10 +966,20 @@ function obtenerResumenContratosPorLider() {
  */
 function obtenerTodosContratosClientes($filtros = []) {
     global $pdo;
-    $sql = "SELECT cc.*, c.nombrecomercial AS nombre_cliente, e.nombrecorto AS nombre_lider
+    $sql = "SELECT cc.*, c.nombrecomercial AS nombre_cliente, e.nombrecorto AS nombre_lider,
+                   la.ultima_numeroadenda, la.ultima_fechafin
             FROM contratocliente cc
             JOIN cliente c ON cc.idcliente = c.idcliente
             JOIN empleado e ON cc.lider = e.idempleado
+            LEFT JOIN (
+                SELECT a1.idcontratocli, a1.numeroadenda AS ultima_numeroadenda, a1.fechafin AS ultima_fechafin
+                FROM adendacliente a1
+                INNER JOIN (
+                    SELECT idcontratocli, MAX(numeroadenda) AS max_numeroadenda
+                    FROM adendacliente
+                    GROUP BY idcontratocli
+                ) a2 ON a1.idcontratocli = a2.idcontratocli AND a1.numeroadenda = a2.max_numeroadenda
+            ) AS la ON cc.idcontratocli = la.idcontratocli
             WHERE 1=1"; // Para facilitar añadir filtros
     $params = [];
 

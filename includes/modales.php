@@ -16,6 +16,26 @@
             </div>
         </div>
     </div>
+</div>
+
+<!-- Modal para ver detalles de la adenda -->
+<div class="modal fade" id="modalVerAdendaDetalles" tabindex="-1" aria-labelledby="modalVerAdendaDetallesLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalVerAdendaDetallesLabel">Detalles de la Adenda</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="modalVerAdendaDetallesBody">
+                <!-- El contenido se cargará aquí -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Modal Confirmar Cancelación -->
 <div class="modal fade" id="modalConfirmarCancelar" tabindex="-1" aria-labelledby="modalConfirmarCancelarLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -33,7 +53,6 @@
             </div>
         </div>
     </div>
-</div>
 </div>
 
 <!-- NO OLVIDES MANTENER TUS OTROS MODALES EXISTENTES EN ESTE ARCHIVO -->
