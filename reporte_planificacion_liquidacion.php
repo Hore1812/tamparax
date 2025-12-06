@@ -6,6 +6,7 @@ require_once 'funciones.php';
 // Para poblar los selects de filtro
 $anios_disponibles = [];
 $current_year = date('Y');
+$current_month = date('n'); // 'n' para el número del mes sin ceros iniciales
 for ($i = $current_year + 1; $i >= $current_year - 5; $i--) {
     $anios_disponibles[] = $i;
 }
@@ -37,7 +38,7 @@ $clientes = obtenerClientes();
                     <select id="mes" name="mes" class="form-select form-select-sm">
                         <option value="">Todos los Meses</option>
                         <?php foreach ($meses_espanol as $num => $nombre): ?>
-                            <option value="<?php echo $num; ?>"><?php echo $nombre; ?></option>
+                            <option value="<?php echo $num; ?>" <?php echo ($num == $current_month) ? 'selected' : ''; ?>><?php echo $nombre; ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>

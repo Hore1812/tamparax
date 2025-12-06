@@ -33,7 +33,7 @@ window.onload = function() {
                     $('#contenedorDobleEntrada').show();
                     $('#contenedorGraficoBarras').show();
                     $('#contenedorColaboradores').show();
-                    
+
                     renderizarSummaryCards(response.data.summary);
                     renderizarTablaDobleEntrada(response.data.contratos);
                     renderizarGraficoDobleEntrada(response.data.estados);
@@ -62,20 +62,15 @@ window.onload = function() {
 
         if (data.length === 0) return;
 
-        // Agrupar por contrato
-        const contratos = {};
+        // Obtener una lista de todos los estados posibles
         const estados = new Set();
         data.forEach(item => {
-            contratos[item.contrato_cliente] = {
-                horas_planificadas: parseFloat(item.horas_planificadas),
-                estados: item.estados
-            };
             for (const estado in item.estados) {
                 estados.add(estado);
             }
         });
 
-        const estadosArray = Array.from(estados);
+        const estadosArray = Array.from(estados).sort(); // Ordenar para consistencia
 
         // Crear cabecera
         const colorMapping = {};
@@ -87,38 +82,39 @@ window.onload = function() {
         headerRow += '</tr>';
         thead.append(headerRow);
 
-        // Crear cuerpo
-        const totales = {};
-        for (const contrato in contratos) {
-            let bodyRow = `<tr><td>${contrato}</td><td>${parseFloat(contratos[contrato].horas_planificadas).toFixed(2)}h</td>`;
+        // Crear cuerpo y calcular totales
+        const totalesEstado = {};
+        let totalHorasPlanificadas = 0;
+
+        data.forEach(contrato => {
+            const horasPlanificadas = parseFloat(contrato.horas_planificadas);
+            totalHorasPlanificadas += horasPlanificadas;
+
+            let bodyRow = `<tr><td>${contrato.contrato_cliente}</td><td>${horasPlanificadas.toFixed(2)}h</td>`;
             estadosArray.forEach(estado => {
-                const horas = parseFloat(contratos[contrato].estados[estado] || 0);
-                const porcentaje = (horas / parseFloat(contratos[contrato].horas_planificadas) * 100);
+                const horas = parseFloat(contrato.estados[estado] || 0);
+                const porcentaje = horasPlanificadas > 0 ? (horas / horasPlanificadas * 100) : 0;
                 const color = getCellColor(porcentaje);
-                bodyRow += `<td style="background-color: ${color};">${horas}h <span style="color: rgba(0,0,0,0.5);">(${porcentaje.toFixed(2)}%)</span></td>`;
-              
-                if (!totales[estado]) {
-                    totales[estado] = 0;
+                bodyRow += `<td style="background-color: ${color};">${horas.toFixed(2)}h <span style="color: rgba(0,0,0,0.5);">(${porcentaje.toFixed(2)}%)</span></td>`;
+
+                if (!totalesEstado[estado]) {
+                    totalesEstado[estado] = 0;
                 }
-                totales[estado] += horas;
+                totalesEstado[estado] += horas;
             });
             bodyRow += '</tr>';
             tbody.append(bodyRow);
-        }
+        });
 
         // Crear fila de totales
-        let totalHorasPlanificadas = 0;
-        for (const contrato in contratos) {
-            totalHorasPlanificadas += contratos[contrato].horas_planificadas;
-        }
         let totalRow = `<tr class="text-center">
                             <td style="background-color: #012060; color: white;"><strong>Total</strong></td>
                             <td style="background-color: #012060; color: white;"><strong>${totalHorasPlanificadas.toFixed(2)}h</strong></td>`;
         estadosArray.forEach((estado, index) => {
-            const totalHoras = totales[estado] || 0;
-            const totalPorcentaje = (totalHoras / totalHorasPlanificadas * 100).toFixed(2);
+            const totalHoras = totalesEstado[estado] || 0;
+            const totalPorcentaje = totalHorasPlanificadas > 0 ? (totalHoras / totalHorasPlanificadas * 100).toFixed(2) : 0;
             const color = chartColors[index % chartColors.length];
-            totalRow += `<td style="background-color: ${color}; color: white;"><strong>${totalHoras}h (${totalPorcentaje}%)</strong></td>`;
+            totalRow += `<td style="background-color: ${color}; color: white;"><strong>${totalHoras.toFixed(2)}h (${totalPorcentaje}%)</strong></td>`;
         });
         totalRow += '</tr>';
         tbody.append(totalRow);

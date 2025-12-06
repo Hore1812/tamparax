@@ -16,13 +16,13 @@ try {
     $sql_planes = "
         SELECT
             p.idContratoCliente,
-            p.horasplan,
+            SUM(p.horasplan) as horasplan,
             CONCAT(c.nombrecomercial, ' - ', cc.descripcion) as nombre_contrato_cliente
         FROM planificacion p
         JOIN contratocliente cc ON p.idContratoCliente = cc.idcontratocli
         JOIN cliente c ON cc.idcliente = c.idcliente
         WHERE YEAR(p.fechaplan) = :anio";
-    
+
     if ($mes) {
         $sql_planes .= " AND MONTH(p.fechaplan) = :mes";
         $params_planes['mes'] = $mes;
@@ -32,6 +32,8 @@ try {
         $params_planes['id_cliente'] = $idCliente;
     }
 
+    $sql_planes .= " GROUP BY p.idContratoCliente, nombre_contrato_cliente";
+
     $stmt_planes = $pdo->prepare($sql_planes);
     $stmt_planes->execute($params_planes);
     $planes = $stmt_planes->fetchAll(PDO::FETCH_ASSOC);
@@ -39,9 +41,9 @@ try {
     // 2. Obtener todas las liquidaciones para el período y cliente
     $params_liquidaciones = ['anio' => $anio];
     $sql_liquidaciones = "
-        SELECT 
-            l.idcontratocli, 
-            l.estado, 
+        SELECT
+            l.idcontratocli,
+            l.estado,
             l.cantidahoras,
             CONCAT(c.nombrecomercial, ' - ', cc.descripcion) as nombre_contrato_cliente
         FROM liquidacion l
@@ -58,7 +60,7 @@ try {
         $sql_liquidaciones .= " AND c.idcliente = :id_cliente";
         $params_liquidaciones['id_cliente'] = $idCliente;
     }
-    
+
     $stmt_liquidaciones = $pdo->prepare($sql_liquidaciones);
     $stmt_liquidaciones->execute($params_liquidaciones);
     $liquidaciones = $stmt_liquidaciones->fetchAll(PDO::FETCH_ASSOC);
@@ -71,7 +73,7 @@ try {
         JOIN distribucionhora d ON l.idliquidacion = d.idliquidacion
         JOIN empleado e ON d.participante = e.idempleado
         WHERE l.activo = 1 AND l.estado = 'Completo' AND YEAR(l.fecha) = :anio";
-    
+
     if ($mes) {
        $sql_colaboradores .= " AND MONTH(l.fecha) = :mes";
        $params_colaboradores['mes'] = $mes;
@@ -95,14 +97,15 @@ try {
     // 4. Procesar y combinar los datos en PHP
     $contratos = [];
     $summary = ['total_horas_planificadas' => 0, 'total_horas_liquidadas' => 0, 'total_horas_completadas' => 0];
-    
+    $todos_los_estados = ['Programado', 'En proceso', 'En revisión', 'Completo']; // Asegurar todos los estados
+
     // Inicializar desde planes
     foreach ($planes as $plan) {
         $idContrato = $plan['idContratoCliente'];
         $contratos[$idContrato] = [
             'contrato_cliente' => $plan['nombre_contrato_cliente'],
             'horas_planificadas' => floatval($plan['horasplan']),
-            'estados' => [],
+            'estados' => array_fill_keys($todos_los_estados, 0), // Inicializar todos los estados a 0
         ];
         $summary['total_horas_planificadas'] += floatval($plan['horasplan']);
     }
@@ -110,47 +113,37 @@ try {
     // Procesar liquidaciones, añadiendo nuevos contratos si es necesario
     foreach ($liquidaciones as $liq) {
         $idContrato = $liq['idcontratocli'];
-        
+
         if (!isset($contratos[$idContrato])) {
             $contratos[$idContrato] = [
                 'contrato_cliente' => $liq['nombre_contrato_cliente'],
                 'horas_planificadas' => 0,
-                'estados' => [],
+                'estados' => array_fill_keys($todos_los_estados, 0), // Inicializar todos los estados a 0
             ];
         }
-        
+
         $estado = $liq['estado'];
         $horas = floatval($liq['cantidahoras']);
-        
-        if (!isset($contratos[$idContrato]['estados'][$estado])) {
-            $contratos[$idContrato]['estados'][$estado] = 0;
+
+        if (isset($contratos[$idContrato]['estados'][$estado])) {
+            $contratos[$idContrato]['estados'][$estado] += $horas;
         }
-        $contratos[$idContrato]['estados'][$estado] += $horas;
-        
+
         $summary['total_horas_liquidadas'] += $horas;
         if ($estado === 'Completo') {
             $summary['total_horas_completadas'] += $horas;
         }
     }
-    
+
     $estados_data = [];
     foreach ($contratos as $contrato) {
-        if (empty($contrato['estados'])) {
-             $estados_data[] = [
+        foreach ($contrato['estados'] as $estado => $horas) {
+            $estados_data[] = [
                'contrato_cliente' => $contrato['contrato_cliente'],
-               'estado_liquidacion' => 'Sin Liquidaciones',
-               'total_horas' => 0,
+               'estado_liquidacion' => $estado,
+               'total_horas' => $horas,
                'horas_planificadas' => $contrato['horas_planificadas']
-           ];
-        } else {
-            foreach ($contrato['estados'] as $estado => $horas) {
-                $estados_data[] = [
-                   'contrato_cliente' => $contrato['contrato_cliente'],
-                   'estado_liquidacion' => $estado,
-                   'total_horas' => $horas,
-                   'horas_planificadas' => $contrato['horas_planificadas']
-                ];
-            }
+            ];
         }
     }
 
